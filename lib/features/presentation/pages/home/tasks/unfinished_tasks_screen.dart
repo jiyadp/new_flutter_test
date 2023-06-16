@@ -1,0 +1,138 @@
+import 'package:eminencetel/core/states/data_state.dart';
+import 'package:eminencetel/features/data/models/tasks_model.dart';
+import 'package:eminencetel/features/presentation/bloc/tasks_cubit.dart';
+import 'package:eminencetel/features/presentation/pages/task/task_details_screen.dart';
+import 'package:eminencetel/features/presentation/pages/widgets/task_card_widget.dart';
+import 'package:eminencetel/features/presentation/res/custom_colors.dart';
+import 'package:eminencetel/features/presentation/utils/task_data_model.dart';
+import 'package:eminencetel/injection_container.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class UnfinishedTasksScreen extends StatefulWidget {
+  const UnfinishedTasksScreen({Key? key}) : super(key: key);
+  static const String id = 'unfinished_task_screen';
+  @override
+  State<UnfinishedTasksScreen> createState() => _UnfinishedTasksScreenState();
+}
+
+class _UnfinishedTasksScreenState extends State<UnfinishedTasksScreen> {
+  late final List<TasksData> _searchResult = [];
+  late List<TasksData>? _myTasksModelList = [];
+  TextEditingController controllerText = TextEditingController();
+  var taskCubit = getIt<TasksCubit>();
+
+  Future refresh() async {
+    _myTasksModelList?.clear();
+    _searchResult.clear();
+    setState(() {
+      taskCubit.getUnFinishedTasks();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    taskCubit.syncTasks();
+    return BlocProvider<TasksCubit>(
+      create: (_) => taskCubit..getUnFinishedTasks(),
+      child: BlocBuilder<TasksCubit, DataState<TasksModel>>(
+          builder: (context, state) {
+        _myTasksModelList = state.data?.data;
+        //_searchResult = state.data?.data;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: RefreshIndicator(
+            onRefresh: refresh,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      state.isInProgress
+                          ? LinearProgressIndicator(
+                              color: CustomColors.black,
+                              backgroundColor: CustomColors.white,
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: state.isEmpty
+                                  ? [
+                                      const Center(
+                                        child: Text("No results found"),
+                                      )
+                                    ]
+                                  : _searchResult.isNotEmpty ||
+                                          controllerText.text.isNotEmpty
+                                      ? List.from(
+                                          _searchResult.map(
+                                            (item) => TaskCardWidget(
+                                              taskData: item,
+                                              onClick: () {
+                                                Navigator.pushNamed(context,
+                                                    TaskDetailsScreen.id,
+                                                    arguments: TaskDataModel(
+                                                        scheduleId:
+                                                            "${item.id}",
+                                                        taskNo:
+                                                            "${item.task?.taskNo}"));
+                                              },
+                                            ),
+                                          ),
+                                        )
+                                      : List.from(
+                                          _myTasksModelList!
+                                              .map((item) => TaskCardWidget(
+                                                  taskData: item,
+                                                  onClick: () {
+                                                    Navigator.pushNamed(
+                                                            context,
+                                                            TaskDetailsScreen
+                                                                .id,
+                                                            arguments: TaskDataModel(
+                                                                scheduleId:
+                                                                    "${item.id}",
+                                                                taskNo:
+                                                                    "${item.task?.taskNo}"))
+                                                        .then((_) {
+                                                      // This block runs when you have returned back to the 1st Page from 2nd.
+                                                      context
+                                                          .read<TasksCubit>()
+                                                          .getUnFinishedTasks();
+                                                    });
+                                                  })),
+                                        ),
+                            ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  onSearchTextChanged(String text) async {
+    _searchResult.clear();
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+
+    for (var swcDetails in _myTasksModelList!) {
+      if (swcDetails.project
+          .toString()
+          .toLowerCase()
+          .contains(text.toLowerCase())) {
+        _searchResult.add(swcDetails);
+      }
+    }
+    setState(() {});
+  }
+}

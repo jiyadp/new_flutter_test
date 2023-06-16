@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>702545600199-pcoh8heve2nkqdmu54e6sgb7gtinkb3l.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.702545600199-pcoh8heve2nkqdmu54e6sgb7gtinkb3l</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCrhguamnX9WbfgpO-s9qkMpEIoeExljqw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>702545600199</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.eminencetel</string>
+	<key>PROJECT_ID</key>
+	<string>eminencetel-aa529</string>
+	<key>STORAGE_BUCKET</key>
+	<string>eminencetel-aa529.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:702545600199:ios:03a9b985e82500153768e2</string>
+</dict>
+</plist>
